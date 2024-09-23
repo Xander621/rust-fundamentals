@@ -1,0 +1,1 @@
+/home/alance/Development/ultimate-rust-crash-course/rust-fundamentals/c_simple_types/target/debug/libc_simple_types.rlib: /home/alance/Development/ultimate-rust-crash-course/rust-fundamentals/c_simple_types/src/lib.rs
