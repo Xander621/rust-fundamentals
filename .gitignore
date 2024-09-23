@@ -2,7 +2,7 @@
 # Will ignore files and directories created by Cargo and Rust compilation.
 
 # Target directory: compiled output of your Rust program
-/target/
+**/target/
 
 # Cargo.lock: lockfile for dependencies in libraries (optional to ignore in libraries)
 # You usually want to keep this in applications, but in libraries, you might exclude it.
