@@ -1,0 +1,1 @@
+/home/alance/Development/ultimate-rust-crash-course/rust-fundamentals/b_functions/target/debug/b_functions: /home/alance/Development/ultimate-rust-crash-course/rust-fundamentals/b_functions/src/main.rs
