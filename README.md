@@ -159,6 +159,7 @@ Compound types gather multipel values of other types into one type.
 ### Control Flow
 
 #### if statement
+
 The "if" statement in rust does not require parentheses around the condition, everything between the if and opening curly brace is the condition. The condition **must** evalutat to a boolean. Rust does not like type coercion
 
 ```rust
@@ -193,7 +194,9 @@ msg = if num == 5 {
   "other
 };
 ```
+
 Can't use turnary expressions like c
+
 ```rust
 num = a ? b : c // can't use, but
 num = if a {b} else {c};
@@ -205,13 +208,18 @@ num = if a {
 ```
 
 #### String
+
 There are at least six types of strings in teh Rust standard library. But we mostly care about two of them that overlap each other.
+
 1. *str* - the string slice and it will almost always be use as a borrowed string slice *&str*
    1. A literal string is alwasy a borrowed string slice
+
    ```rust
    let msg = "hello world";
    ```
+
 2. **S**tring
+
    ```rust
    let msg = "hello world".to_string(); // calling the to_string() method on a borrowed string slice
    // or
@@ -228,3 +236,142 @@ There are at least six types of strings in teh Rust standard library. But we mos
   * capacity -> 32
 * Both string types are valid UTF-8 by definition, compiler enforcement and runtime checks
 * Strings cannot be indexed by character position i.e. my_string[3]
+
+### Ownership
+
+Ownership is what makes all those informative compiler error messages possible and necessary.
+
+There are three rules to ownership
+
+1. Each value has an owner. There is no value in memory, no data that doesn't have a variable that owns it.
+2. There is only one owner of a value. 
+   1. No variables may share ownership. 
+   2. Other variables may borrow the values.
+3. Value gets dropped if its owner goes out of scope.
+
+#### Ownership in action
+
+```rust
+let s1 - String::from("abc");
+let s2 = s1; // at this point the value for S1 is moved to S2 because only one variable can own the value
+println!("{}", s1); // Error!
+
+// instead
+let s2 = s1.clone(); // akin to a deep copy
+```
+
+### References & Borrowing
+
+```rust
+let s1 = String::from("abc");
+
+do_stuff(&s1); // borrows a reference to the value of s1. i.e. the reference, not the values, gets moved into the function.
+
+fn do_stuff(s: &String) { // reference to a string
+  // do stuff
+}
+```
+
+By default references are always immutable, to make them mutable
+
+```rust
+let mut s1 = String::from("abc");
+do_stuff(&mut s1);
+
+fn do_stuff(S: &mut String) {
+
+  // the dot operator for a method or a field auto-dereferences down to the actual value. 
+  // You don't have to worry whether sommething is a value is a reference or even a reference to a reference.
+  s.insert_str(0, "hi, ");  
+
+  // To manually dereference s it would look like this, similar to C.
+  (*s).insert_str(0, "hi, ");
+
+  // With most other operators, like the assignment operator, you'll need to manually dereference your reference if you want 
+  // to read from or write to the actual value. Here I'm dereferencing s so I can replace the entire value.
+  *s = String::from("Replacement");
+}
+```
+
+Summary
+
+```rust
+// immutable reference to x
+&x 
+
+// mutable reference to x
+&mut x 
+
+// type of value
+i32
+
+// type of immutable reference 
+&i32
+
+// type of mutable reference
+&mut i32
+
+// variable x is a mutable reference to a value, so dereferncing x gives you mutable access to the value
+x: &mut i32
+*x  // a mutable i32
+
+// variable x is immutable, dereferencing x gives you immutable access to the value
+x: &i32
+*x  // an immutable i32
+```
+
+References are implemented via pointers, so naturally Rust has a special rule to keep us safe. At any given time
+you can have either ***exactly one*** mutable reference or any number of immutable references.
+
+### Structs
+
+```rust
+struct RedFox { // Capital camel case then curly braces
+  enemy: bool,
+  life: u8,
+}
+
+// instantiate a struct
+let fox = RedFox {
+  enemy: true,
+  life: 70,
+}
+
+// implement an associated function to use as a constructor to create a struct... 
+impl RedFox {
+  fn new() -> Self {
+    Self {
+      enemy: true,
+      life: 70,
+    }
+  }
+}
+
+let fox = RedFox::new();
+```
+
+### Triats
+
+Triats are similar to interfaces in other languages. Rust takes the composition over inheritance approach.
+Using our RedFox struct, let's make a trait called Noisy. Traits define required behavior.
+
+```rust
+struct RedFox {
+  enemy: bool,
+  life: u32,
+}
+
+trait Noisy {
+  fn get_noise(&self) -> &str;
+}
+
+impl Noisy for RedFox {
+  fn get_noise(&self) -> &str { "Meow?"};
+}
+
+// generic function that implments the Noisy triat
+fn print_noise<T: Noisy>(item: T) {
+  println!("{}", item.get_noise());
+}
+
+```
