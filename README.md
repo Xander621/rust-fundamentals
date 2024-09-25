@@ -155,3 +155,76 @@ Compound types gather multipel values of other types into one type.
 
   * Arrays are limited to a size of 32, above which they lose most of their functionality.
     * Arrays live on the stack by default and are fixed size, so you will ususally use ***vectors*** or slices of vectors instead of arrays.
+
+### Control Flow
+
+#### if statement
+The "if" statement in rust does not require parentheses around the condition, everything between the if and opening curly brace is the condition. The condition **must** evalutat to a boolean. Rust does not like type coercion
+
+```rust
+if num == 5 {
+  msg = "five";
+} else if num == 4 {
+  msg = "four"
+} else {
+  msg = "other";
+}
+```
+
+"if" is an expression, not a statement. Statements don't return values, expressions do, meaning that we can change this code to this:
+
+```rust
+// msg is assigned the value of the "if" expression
+// Five things to note:
+// 1. there are no semicolons after the branch values to make it so that the values get returned from the blocks as tail expressions.
+// 2. you can't use return for this purpose, even if you wanted to, because return only applies to blocks that are function bodies, 
+//    so return would return out of the current function.
+// 3. All the blocks return the same type 
+// 4. there is a semicolon at the end of the "if" expression.
+//    NOTE: if you don't use the value of an "if" expression then Rust will let you cheat and leave off the semicolon, but if you do use 
+//          the value of an if expression in a statement, then you need to put a semicolon after the closing brace before starting any other
+//          statements in the block.
+// 5. Braces are not optional in Rust.
+msg = if num == 5 {
+  "five"
+} else if num == 4 {
+  "four"
+} else {
+  "other
+};
+```
+Can't use turnary expressions like c
+```rust
+num = a ? b : c // can't use, but
+num = if a {b} else {c};
+
+mum = a ? x ? y : z : c;  // bad
+num = if a {
+  if x {y} else {z}
+} else {c};
+```
+
+#### String
+There are at least six types of strings in teh Rust standard library. But we mostly care about two of them that overlap each other.
+1. *str* - the string slice and it will almost always be use as a borrowed string slice *&str*
+   1. A literal string is alwasy a borrowed string slice
+   ```rust
+   let msg = "hello world";
+   ```
+2. **S**tring
+   ```rust
+   let msg = "hello world".to_string(); // calling the to_string() method on a borrowed string slice
+   // or
+   let msg = String::from("hello world"); // passing borrowed string slice to String::from()
+   ```
+
+* The data in a borrowed string slice cannot be modified while the data in a String can be modified.
+* A borrowed string slice is internally made up of a pointer to some bytes and a length.
+  * ptr -> hello world
+  * len -> 11
+* A String is made up of a pointer to some bytes, a length and a capacity that may be higher than what is currently being used.
+  * ptr -> hello world
+  * len -> 11
+  * capacity -> 32
+* Both string types are valid UTF-8 by definition, compiler enforcement and runtime checks
+* Strings cannot be indexed by character position i.e. my_string[3]
