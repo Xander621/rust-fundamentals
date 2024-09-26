@@ -375,3 +375,42 @@ fn print_noise<T: Noisy>(item: T) {
 }
 
 ```
+
+### Closures
+
+You'll encounter closures when you want to spawn a thread, or when you want to do some functional programming with iterators, and in some other common places in the standard library.
+
+A closure is an anonymous function that can borrow or capture some data from the scope it is nested in. The syntax is a parameter list between two pipes w/o type annotations, followed by a block. The types of the arguments and the return type are all inferred from how you use the arguments and what you return.
+
+```rust 
+|x, y| {x + y}  // Closure syntax
+
+let add = |x, y| { x + y };
+
+add(1,2)  // return 3
+
+let mut v = vec![2, 4, 6];
+v.iter()
+  .map(|x| x * 3)              // here is an example of using map() and a closure to multiply each item in a vector by 3,
+  .filter(|x| *x > 10)         // the filter and a closure to discard any values that aren't greater that 10
+  .fold(0, |acc, x| acc + x);  // and then fold() with an initial value and a closure to sum the remaining values together
+```
+
+### Threads
+
+Here is a fully functional, but pretty empty, example.
+
+```rust
+use std::thread;
+
+fn main() {
+  let handle = thread::spawn(move || {
+    // do stuff in a child thread
+  });
+
+  // do stuff simultaneously in the main thread
+
+  // wait until thread has exited
+  handle.join().unwrap();
+}
+```
